@@ -1,0 +1,15 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type UsersModel {
+  id: Int!
+  first_name: String
+  last_name: String
+  nickname: String!
+}
+
+type Query {
+  getUserById(id: Int!): UsersModel
+  getUsers: [UsersModel!]!
+}

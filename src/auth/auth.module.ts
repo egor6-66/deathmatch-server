@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { SequelizeModule } from '@nestjs/sequelize';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import process from 'process';
 
-import { UsersModel, UsersService } from '../users';
+import { User, UsersService } from '../users';
 
 import Controller from './auth.controller';
 import AuthService from './auth.service';
@@ -13,7 +13,7 @@ import { AuthStrategy } from './utils';
     providers: [AuthService, UsersService, AuthStrategy.Local, AuthStrategy.Jwt, AuthStrategy.RefreshJwt],
     controllers: [Controller],
     imports: [
-        SequelizeModule.forFeature([UsersModel]),
+        TypeOrmModule.forFeature([User]),
         JwtModule.register({
             secret: `${process.env.GWT_SECRET}`,
         }),

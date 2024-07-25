@@ -1,35 +1,33 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { Column, DataType, Model, Table } from 'sequelize-typescript';
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
-interface IUserCreation {
-    nickname: string;
-    password: string;
-}
+import { ClientApp } from '../client-app';
 
-@Table({ tableName: 'user' })
+@Entity({ name: 'user' })
 @ObjectType()
-class UsersModel extends Model<UsersModel, IUserCreation> {
-    @Column({ type: DataType.INTEGER, unique: true, autoIncrement: true, primaryKey: true })
+class User {
+    @PrimaryGeneratedColumn()
     @Field(() => Int)
     id: number;
 
-    @Column({ type: DataType.STRING })
+    @Column({ nullable: true })
     @Field({ nullable: true })
     first_name: string;
 
-    @Column({ type: DataType.STRING })
+    @Column({ nullable: true })
     @Field({ nullable: true })
     last_name: string;
 
-    @Column({ type: DataType.STRING, allowNull: false, unique: true })
+    @Column({ unique: true })
     @Field()
     nickname: string;
 
-    @Column({ type: DataType.STRING, allowNull: false })
+    @Column()
     password: string;
 
-    // @Field({ nullable: true })
-    // settings?: Settings;
+    @OneToOne(() => ClientApp, (ClientApp) => ClientApp, { cascade: true })
+    @JoinColumn()
+    clientApp: ClientApp;
 }
 
-export default UsersModel;
+export default User;

@@ -8,7 +8,6 @@ import AppModule from './app.module';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
-    app.useGlobalPipes(new Pipes.Validation());
     app.useGlobalInterceptors(new Interceptors.TransformResponse());
     app.use(cookieParser());
     app.enableCors({
@@ -19,7 +18,9 @@ async function bootstrap() {
         new ValidationPipe({
             whitelist: true,
             forbidNonWhitelisted: true,
+            transform: false,
         })
+        // new Pipes.Validation()
     );
     await app.listen(process.env.PORT || 5000);
 }

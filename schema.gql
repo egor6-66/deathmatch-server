@@ -2,7 +2,7 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type UsersModel {
+type User {
   id: Int!
   first_name: String
   last_name: String
@@ -10,6 +10,10 @@ type UsersModel {
 }
 
 type Query {
-  getUserById(id: Int!): UsersModel
-  getUsers: [UsersModel!]!
+  user(data: GetUser!): User
+}
+
+input GetUser {
+  nickname: String
+  id: Int
 }

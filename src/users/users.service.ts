@@ -1,18 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/sequelize';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
-import UsersModel from './users.model';
+import { ClientApp } from '../client-app';
+
+import User from './users.model';
+import { Inputs } from './utils';
 
 @Injectable()
 class UsersService {
-    constructor(@InjectModel(UsersModel) private userRepo: typeof UsersModel) {}
+    constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
 
     async createUser(user: { nickname: string; password: string }) {
-        return await this.userRepo.create(user);
+        const newUser = await this.userRepo.create({ ...user, clientApp: new ClientApp() });
+        await this.userRepo.save(newUser);
+
+        return newUser;
     }
 
-    async getUserByNickname(data: { nickname?: string; id?: number }) {
-        return await this.userRepo.findOne({ where: data });
+    async getUser(data: Inputs.GetUser) {
+        return await this.userRepo.findOneBy(data);
     }
 }
 

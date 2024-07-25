@@ -2,11 +2,13 @@ import { ApolloDriver } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
-import { SequelizeModule } from '@nestjs/sequelize';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import process from 'process';
 
 import { AuthModule } from './auth';
-import { UsersModel, UsersModule } from './users';
+import { ClientAppModule } from './client-app';
+import { ClientApp } from './client-app';
+import { User, UsersModule } from './users';
 
 @Module({
     imports: [
@@ -26,18 +28,19 @@ import { UsersModel, UsersModule } from './users';
                 credentials: true,
             },
         }),
-        SequelizeModule.forRoot({
-            dialect: 'postgres',
+        TypeOrmModule.forRoot({
+            type: 'postgres',
             host: process.env.POSTGRES_HOST,
             port: +process.env.POSTGRES_PORT,
             username: process.env.POSTGRES_USER,
             password: process.env.POSTGRES_PASS,
             database: process.env.POSTGRES_DB,
-            models: [UsersModel],
-            autoLoadModels: true,
+            entities: [User, ClientApp],
+            synchronize: process.env.NODE_ENV === 'dev',
         }),
         UsersModule,
         AuthModule,
+        ClientAppModule,
     ],
 })
 class AppModule {}

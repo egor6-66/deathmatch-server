@@ -1,27 +1,24 @@
-import { UseGuards } from '@nestjs/common';
-import { Args, Int, Query, Resolver } from '@nestjs/graphql';
-import { Guards } from '@utils';
+import { Args, Mutation, ObjectType, Query, Resolver } from '@nestjs/graphql';
 
-import User from './users.model';
+import UsersModel from './users.model';
 import UsersService from './users.service';
+import { Inputs } from './utils';
 
-@UseGuards(Guards.AuthJwt)
-@Resolver(() => User)
+// @UseGuards(Guards.AuthJwt)
+
+@Resolver()
 class UsersResolver {
     constructor(private userService: UsersService) {}
 
-    @Query(() => User, { nullable: true })
-    getUserById(@Args('id', { type: () => Int }) id: number) {
-        return {
-            id: 1,
-            name: 'wd',
-        };
+    @Query(() => UsersModel, { nullable: true, name: 'user' })
+    async getUser(@Args('data') data: Inputs.GetUser) {
+        return await this.userService.getUser(data);
     }
 
-    @Query(() => [User])
-    getUsers() {
-        return [];
-    }
+    // @Mutation(() => UsersModel, { nullable: true })
+    // async updSettings(@Args('data') theme: string) {
+    //     return await this.userService.setTheme(theme);
+    // }
 }
 
 export default UsersResolver;

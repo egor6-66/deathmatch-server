@@ -1,5 +1,5 @@
-import AuthController from './auth.controller';
 import AuthModule from './auth.module';
+import AuthResolver from './auth.resolver';
 import AuthService from './auth.service';
 
-export { AuthController, AuthModule, AuthService };
+export { AuthModule, AuthResolver, AuthService };

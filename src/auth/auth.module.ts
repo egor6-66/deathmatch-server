@@ -5,13 +5,13 @@ import process from 'process';
 
 import { User, UsersService } from '../users';
 
-import Controller from './auth.controller';
+import AuthResolver from './auth.resolver';
 import AuthService from './auth.service';
 import { AuthStrategy } from './utils';
 
 @Module({
-    providers: [AuthService, UsersService, AuthStrategy.Local, AuthStrategy.Jwt, AuthStrategy.RefreshJwt],
-    controllers: [Controller],
+    providers: [AuthResolver, AuthService, UsersService, AuthStrategy.Local, AuthStrategy.Jwt, AuthStrategy.RefreshJwt],
+
     imports: [
         TypeOrmModule.forFeature([User]),
         JwtModule.register({

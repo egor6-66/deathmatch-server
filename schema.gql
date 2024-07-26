@@ -2,18 +2,33 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type ClientApp {
+  id: Int!
+  lang: String
+  theme: String
+}
+
 type User {
   id: Int!
   first_name: String
   last_name: String
   nickname: String!
+  clientApp: ClientApp
 }
 
 type Query {
-  user(data: GetUser!): User
+  viewer: User
+  uniqueNickname(nickname: String!): Boolean
+  logout: Boolean!
+  refreshToken: Boolean!
 }
 
-input GetUser {
-  nickname: String
-  id: Int
+type Mutation {
+  registration(data: Auth!): Boolean!
+  login(data: Auth!): Boolean!
+}
+
+input Auth {
+  nickname: String!
+  password: String!
 }

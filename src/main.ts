@@ -1,27 +1,37 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { Interceptors, Pipes } from '@utils';
+import { Interceptors } from '@utils';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import process from 'process';
 
 import AppModule from './app.module';
 
+const options = {
+    origin: 'http://localhost:3000',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+    credentials: true,
+};
+
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule);
+    const app = await NestFactory.create(AppModule, {
+        cors: options,
+    });
+
+    app.use(cors(options));
     app.useGlobalInterceptors(new Interceptors.TransformResponse());
     app.use(cookieParser());
-    app.enableCors({
-        origin: true,
-        credentials: true,
-    });
+
     app.useGlobalPipes(
         new ValidationPipe({
             whitelist: true,
             forbidNonWhitelisted: true,
             transform: false,
         })
-        // new Pipes.Validation()
     );
+
     await app.listen(process.env.PORT || 5000);
 }
 

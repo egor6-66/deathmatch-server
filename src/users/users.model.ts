@@ -27,6 +27,7 @@ class User {
 
     @OneToOne(() => ClientApp, (ClientApp) => ClientApp, { cascade: true })
     @JoinColumn()
+    @Field({ nullable: true })
     clientApp: ClientApp;
 }
 

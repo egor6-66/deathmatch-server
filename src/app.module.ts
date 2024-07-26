@@ -27,6 +27,7 @@ import { User, UsersModule } from './users';
                 origin: true,
                 credentials: true,
             },
+            context: ({ req, res }) => ({ req, res }),
         }),
         TypeOrmModule.forRoot({
             type: 'postgres',

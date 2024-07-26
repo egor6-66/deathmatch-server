@@ -16,45 +16,51 @@ class AuthService {
     async registration(user: Inputs.Auth, response) {
         const hashPass = await bcrypt.hash(user.password, 5);
         const newUser = await this.userService.createUser({ ...user, password: hashPass });
-        this.saveTokens(response, user);
+        this.saveTokens(newUser, response);
 
         return newUser;
     }
 
-    async validateUser(data: Inputs.Auth) {
-        const user = await this.userService.getUser({ nickname: data.nickname });
+    async login(user: Inputs.Auth, response?: Response) {
+        const foundUser = await this.userService.getUserBy({ nickname: user.nickname });
 
-        if (user && (await bcrypt.compare(data.password, user.password))) {
-            return user;
+        if (foundUser && (await bcrypt.compare(user.password, foundUser.password))) {
+            response && this.saveTokens(foundUser, response);
+
+            return foundUser;
         }
 
         return null;
     }
 
-    async login(user: Inputs.Auth, response) {
-        this.saveTokens(response, user);
-
-        return user;
-    }
-
-    async refreshToken(user: Inputs.Auth, response) {
-        this.saveTokens(response, user);
+    async logout(response, request) {
+        response.clearCookie('accessToken', request.cookies['accessToken']);
+        response.clearCookie('refreshToken', request.cookies['refreshToken']);
 
         return 200;
     }
 
-    saveTokens(response, user: Inputs.Auth) {
+    async refreshToken(refreshToken: string, response) {
+        const data = this.jwtService.decode(refreshToken);
+
+        this.saveTokens({ id: data.id, nickname: data.username }, response);
+
+        return 200;
+    }
+
+    saveTokens(data: { id: number; nickname: string }, response) {
         const payload = {
-            username: user.nickname,
-            sub: { name: user.nickname },
+            username: data.nickname,
+            sub: { name: data.nickname, id: data.id },
         };
 
         const tokens = {
-            accessToken: this.jwtService.sign(payload, { expiresIn: '3600s' }),
+            // accessToken: this.jwtService.sign(payload, { expiresIn: '3600s' }),
+            accessToken: this.jwtService.sign(payload, { expiresIn: '60s' }),
             refreshToken: this.jwtService.sign(payload, { expiresIn: '604800s' }),
         };
 
-        response.cookie('accessToken', tokens.accessToken);
+        response.cookie('accessToken', tokens.accessToken, { httpOnly: true, path: true });
         response.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, path: true });
 
         return tokens;

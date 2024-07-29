@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import UsersService from '../users/users.service';
 
 import GameServer from './game-servers.model';
-import { Inputs } from './utils';
+import { generateServerUrl, Inputs } from './utils';
 
 @Injectable()
 class GameServersService {
@@ -27,7 +27,7 @@ class GameServersService {
         user.gameServers.push(newServer);
         await this.userService.save(user);
 
-        return newServer;
+        return { ...newServer, url: generateServerUrl(user.nickname, newServer.name) };
     }
 
     async getViewerServers(req) {
@@ -38,6 +38,12 @@ class GameServersService {
 
     async getAllServers() {
         return await this.gameServersRepo.find();
+    }
+
+    async getServer(id: number) {
+        const server = await this.gameServersRepo.findOne({ where: { id }, relations: ['user'] });
+
+        return { ...server, url: generateServerUrl(server.user.nickname, server.name) };
     }
 }
 

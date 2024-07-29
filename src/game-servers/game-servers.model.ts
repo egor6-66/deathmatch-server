@@ -19,6 +19,10 @@ class GameServer {
 
     @Column({ nullable: true })
     @Field({ nullable: true })
+    url: string;
+
+    @Column({ nullable: true })
+    @Field({ nullable: true })
     private: boolean;
 
     @ManyToOne(() => User, (user) => user.gameServers)

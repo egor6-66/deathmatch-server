@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Guards } from '@utils';
 
 import GameServer from './game-servers.model';
@@ -11,7 +11,7 @@ import { Inputs } from './utils';
 class GameServersResolver {
     constructor(private gameServersService: GameServersService) {}
 
-    @Mutation(() => GameServer, { nullable: true })
+    @Mutation(() => GameServer, { nullable: true, name: 'newServer' })
     createServer(@Args('data') data: Inputs.CreateServer, @Context() context: any) {
         return this.gameServersService.createServer(data, context.req);
     }
@@ -26,6 +26,12 @@ class GameServersResolver {
     @Query(() => [GameServer], { nullable: true, name: 'allServers' })
     async getAllServers() {
         return await this.gameServersService.getAllServers();
+    }
+
+    @UseGuards(Guards.AuthJwt)
+    @Query(() => GameServer, { nullable: true, name: 'server' })
+    async getServer(@Args('id', { type: () => Int }) id: number) {
+        return await this.gameServersService.getServer(id);
     }
 }
 

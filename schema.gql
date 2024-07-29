@@ -11,6 +11,7 @@ type ClientApp {
 type GameServer {
   id: Int!
   name: String!
+  url: String
   private: Boolean
   user: User!
 }
@@ -31,12 +32,13 @@ type Query {
   refreshToken: Boolean!
   servers: [GameServer!]
   allServers: [GameServer!]
+  server(id: Int!): GameServer
 }
 
 type Mutation {
   registration(data: Auth!): Boolean!
   login(data: Auth!): Boolean!
-  createServer(data: CreateServer!): GameServer
+  newServer(data: CreateServer!): GameServer
 }
 
 input Auth {

@@ -8,6 +8,7 @@ import process from 'process';
 import { AuthModule } from './auth';
 import { ClientAppModule } from './client-app';
 import { ClientApp } from './client-app';
+import { GameServersModule } from './game-servers';
 import { User, UsersModule } from './users';
 
 @Module({
@@ -42,6 +43,7 @@ import { User, UsersModule } from './users';
         UsersModule,
         AuthModule,
         ClientAppModule,
+        GameServersModule,
     ],
 })
 class AppModule {}

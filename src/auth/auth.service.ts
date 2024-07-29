@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
-import { UsersService } from '../users';
+import UsersService from '../users/users.service';
 
 import { Inputs } from './utils';
 
@@ -56,7 +56,7 @@ class AuthService {
 
         const tokens = {
             // accessToken: this.jwtService.sign(payload, { expiresIn: '3600s' }),
-            accessToken: this.jwtService.sign(payload, { expiresIn: '60s' }),
+            accessToken: this.jwtService.sign(payload, { expiresIn: '6000s' }),
             refreshToken: this.jwtService.sign(payload, { expiresIn: '604800s' }),
         };
 

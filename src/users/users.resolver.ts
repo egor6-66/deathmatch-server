@@ -12,18 +12,13 @@ class UsersResolver {
     @UseGuards(Guards.AuthJwt)
     @Query(() => UsersModel, { nullable: true, name: 'viewer' })
     async getViewer(@Context() context: any) {
-        return await this.userService.getViewer(context.req);
+        return await this.userService.getViewer(context.req, ['clientApp']);
     }
 
     @Query(() => Boolean, { nullable: true, name: 'uniqueNickname' })
     async checkUniqueNickname(@Args('nickname') nickname: string) {
         return !(await this.userService.checkUniqueNickname(nickname));
     }
-
-    // @Mutation(() => UsersModel, { nullable: true })
-    // async updSettings(@Args('data') theme: string) {
-    //     return await this.userService.setTheme(theme);
-    // }
 }
 
 export default UsersResolver;

@@ -5,11 +5,13 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import process from 'process';
 
-import { AuthModule } from './auth';
-import { ClientAppModule } from './client-app';
-import { ClientApp } from './client-app';
-import { GameServersModule } from './game-servers';
-import { User, UsersModule } from './users';
+import AuthModule from './auth/auth.module';
+import ClientApp from './client-app/client-app.model';
+import ClientAppModule from './client-app/client-app.module';
+import GameServer from './game-servers/game-servers.model';
+import GameServersModule from './game-servers/game-servers.module';
+import User from './users/users.model';
+import UsersModule from './users/users.module';
 
 @Module({
     imports: [
@@ -37,7 +39,7 @@ import { User, UsersModule } from './users';
             username: process.env.POSTGRES_USER,
             password: process.env.POSTGRES_PASS,
             database: process.env.POSTGRES_DB,
-            entities: [User, ClientApp],
+            entities: [User, ClientApp, GameServer],
             synchronize: process.env.NODE_ENV === 'dev',
         }),
         UsersModule,

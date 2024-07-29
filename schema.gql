@@ -8,12 +8,20 @@ type ClientApp {
   theme: String
 }
 
+type GameServer {
+  id: Int!
+  name: String!
+  private: Boolean
+  user: User!
+}
+
 type User {
   id: Int!
   first_name: String
   last_name: String
   nickname: String!
   clientApp: ClientApp
+  gameServers: GameServer!
 }
 
 type Query {
@@ -21,14 +29,22 @@ type Query {
   uniqueNickname(nickname: String!): Boolean
   logout: Boolean!
   refreshToken: Boolean!
+  servers: [GameServer!]
+  allServers: [GameServer!]
 }
 
 type Mutation {
   registration(data: Auth!): Boolean!
   login(data: Auth!): Boolean!
+  createServer(data: CreateServer!): GameServer
 }
 
 input Auth {
   nickname: String!
+  password: String!
+}
+
+input CreateServer {
+  name: String!
   password: String!
 }

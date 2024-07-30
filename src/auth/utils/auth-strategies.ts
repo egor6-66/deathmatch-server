@@ -16,7 +16,7 @@ export class Local extends PassportStrategy(PassportLocal.Strategy) {
         const user = await this.authService.login({ nickname: username, password });
 
         if (!user) {
-            // throw new UnauthorizedException();
+            throw new UnauthorizedException();
         }
 
         return user;
@@ -33,7 +33,7 @@ export class Jwt extends PassportStrategy(PassportJwt.Strategy, 'jwt') {
     }
 
     async validate(payload) {
-        return { user: payload.sub, username: payload.username };
+        return { user: payload, username: payload.username };
     }
 }
 
@@ -47,6 +47,6 @@ export class RefreshJwt extends PassportStrategy(PassportJwt.Strategy, 'jwt-refr
     }
 
     async validate(payload: any) {
-        return { user: payload.sub, username: payload.username };
+        return { user: payload, username: payload.username };
     }
 }

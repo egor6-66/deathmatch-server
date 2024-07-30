@@ -24,8 +24,8 @@ class GameServersResolver {
 
     @UseGuards(Guards.AuthJwt)
     @Query(() => [GameServer], { nullable: true, name: 'allServers' })
-    async getAllServers() {
-        return await this.gameServersService.getAllServers();
+    async getAllServers(@Context() context: any) {
+        return await this.gameServersService.getAllServers(context.req);
     }
 
     @UseGuards(Guards.AuthJwt)

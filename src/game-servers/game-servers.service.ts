@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
-import { Repository } from 'typeorm';
+import { Literal } from 'sequelize/types/utils';
+import { Like, Not, Repository } from 'typeorm';
 
 import UsersService from '../users/users.service';
 
@@ -36,8 +37,12 @@ class GameServersService {
         return user.gameServers;
     }
 
-    async getAllServers() {
-        return await this.gameServersRepo.find();
+    async getAllServers(req) {
+        const viewerId = await this.userService.getId(req);
+
+        return await this.gameServersRepo.find({
+            where: [{ user: Not(viewerId) }],
+        });
     }
 
     async getServer(id: number) {

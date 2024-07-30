@@ -36,6 +36,12 @@ class UsersService {
         return await this.usersRepo.findOne({ where: { id: data.id }, relations: relations });
     }
 
+    async getId(req) {
+        const data = await this.jwtService.decode(req.cookies['accessToken']);
+
+        return data.id;
+    }
+
     async save(user: User) {
         await this.usersRepo.save(user);
     }

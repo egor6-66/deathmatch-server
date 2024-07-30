@@ -51,12 +51,12 @@ class AuthService {
     saveTokens(data: { id: number; nickname: string }, response) {
         const payload = {
             username: data.nickname,
-            sub: { name: data.nickname, id: data.id },
+            name: data.nickname,
+            id: data.id,
         };
 
         const tokens = {
-            // accessToken: this.jwtService.sign(payload, { expiresIn: '3600s' }),
-            accessToken: this.jwtService.sign(payload, { expiresIn: '6000s' }),
+            accessToken: this.jwtService.sign(payload, { expiresIn: '3600s' }),
             refreshToken: this.jwtService.sign(payload, { expiresIn: '604800s' }),
         };
 

@@ -1,0 +1,8 @@
+/node_modules
+/.husky
+.gitignore
+.git
+.prettierrc.js
+lint-staged.config.js
+README.md
+Dockerfile

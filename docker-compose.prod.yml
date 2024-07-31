@@ -1,0 +1,32 @@
+services:
+  main:
+    container_name: main_prod
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    env_file:
+      - .prod.env
+    ports:
+      - 5000:5000
+    command: npm run start:prod
+    depends_on:
+      - postgres
+      - redis
+    restart: always
+  redis:
+    image: 'redis:alpine'
+    ports:
+      - 6379:6379
+  postgres:
+    image: postgres:15.2
+    env_file:
+      - .prod.env
+    environment:
+      PG_DATA: /var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+volumes:
+  pgdata:

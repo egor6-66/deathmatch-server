@@ -1,0 +1,18 @@
+FROM node:21
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+COPY ./dist ./dist
+
+RUN rm -rf ./src
+
+EXPOSE 5000
+
+CMD ["npm", "run", "start:prod"]
+

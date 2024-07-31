@@ -1,8 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
-import { Literal } from 'sequelize/types/utils';
-import { Like, Not, Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 
 import UsersService from '../users/users.service';
 

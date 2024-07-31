@@ -1,0 +1,36 @@
+services:
+  main:
+    container_name: main
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .dev.env
+    ports:
+      - 5000:5000
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run start:dev
+    depends_on:
+      - postgres
+      - redis
+    restart: always
+
+  redis:
+    image: 'redis:alpine'
+    ports:
+      - 6379:6379
+  postgres:
+    image: postgres:15.2
+    env_file:
+      - .dev.env
+    environment:
+      PG_DATA: /var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+volumes:
+  pgdata:

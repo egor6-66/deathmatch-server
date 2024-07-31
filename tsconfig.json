@@ -21,6 +21,6 @@
     "esModuleInterop": true,
     "paths": {
       "@utils": ["utils/index"],
-    }
+    },
   }
 }

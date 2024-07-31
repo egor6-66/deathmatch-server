@@ -36,6 +36,7 @@ export class AuthJwt extends AuthGuard('jwt') {
 
         if (accessToken) {
             req.headers.authorization = `Bearer ${accessToken}`;
+            console.log('req.headers', req.headers);
         }
 
         try {

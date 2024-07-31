@@ -3,8 +3,7 @@ import { Args, Context, Int, Mutation, Query, Resolver, Subscription } from '@ne
 import { Guards } from '@utils';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 
-import { PUB_SUB } from '../pubSub/pubSub.module';
-
+// import { PUB_SUB } from '../pubSub/pubSub.module';
 import GameServer from './game-servers.model';
 import GameServersService from './game-servers.service';
 import { enums, Inputs } from './utils';
@@ -13,8 +12,8 @@ import { enums, Inputs } from './utils';
 @Resolver()
 class GameServersResolver {
     constructor(
-        private gameServersService: GameServersService,
-        @Inject(PUB_SUB) private readonly pubSub: RedisPubSub
+        private gameServersService: GameServersService
+        // @Inject(PUB_SUB) private readonly pubSub: RedisPubSub
     ) {}
 
     @Mutation(() => GameServer, { nullable: true, name: 'newServer' })

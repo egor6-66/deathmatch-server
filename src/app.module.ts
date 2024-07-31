@@ -23,7 +23,7 @@ import UsersModule from './users/users.module';
             driver: ApolloDriver,
             autoSchemaFile: './schema.gql',
             subscriptions: { 'graphql-ws': true },
-            playground: process.env.NODE_ENV ? { settings: { 'request.credentials': 'include' } } : false,
+            playground: process.env.NODE_ENV === 'dev' ? { settings: { 'request.credentials': 'include' } } : false,
             cors: { origin: true, credentials: true },
             context: ({ req, res }) => ({ req, res }),
         }),

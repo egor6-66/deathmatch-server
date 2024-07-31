@@ -28,7 +28,7 @@ export class Jwt extends PassportStrategy(PassportJwt.Strategy, 'jwt') {
         super({
             jwtFromRequest: PassportJwt.ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: false,
-            secretOrKey: `${process.env.jwt_secret}`,
+            secretOrKey: `${process.env.GWT_SECRET}`,
         });
     }
 
@@ -42,7 +42,7 @@ export class RefreshJwt extends PassportStrategy(PassportJwt.Strategy, 'jwt-refr
         super({
             jwtFromRequest: PassportJwt.ExtractJwt.fromBodyField('refresh'),
             ignoreExpiration: false,
-            secretOrKey: `${process.env.jwt_secret}`,
+            secretOrKey: `${process.env.GWT_SECRET}`,
         });
     }
 

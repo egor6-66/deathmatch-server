@@ -32,6 +32,7 @@ class UsersService {
 
     async getViewer(req, relations: ['clientApp' | 'gameServers']) {
         const data = await this.jwtService.decode(req.cookies['accessToken']);
+        console.log('user', data);
 
         return await this.usersRepo.findOne({ where: { id: data.id }, relations: relations });
     }

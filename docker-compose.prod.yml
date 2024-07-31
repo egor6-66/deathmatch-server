@@ -17,7 +17,7 @@ services:
     image: 'redis:alpine'
     ports:
       - 6379:6379
-  postgres:
+  deathmatch_db:
     image: postgres:15.2
     env_file:
       - .prod.env
@@ -28,5 +28,12 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     restart: always
+  pgadmin:
+    container_name: pg_admin
+    image: dpage/pgadmin4
+    env_file:
+      - .dev.env
+    ports:
+      - 5050:80
 volumes:
   pgdata:

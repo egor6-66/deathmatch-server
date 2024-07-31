@@ -9,7 +9,7 @@ import UsersService from './users.service';
 class UsersResolver {
     constructor(private userService: UsersService) {}
 
-    // @UseGuards(Guards.AuthJwt)
+    @UseGuards(Guards.AuthJwt)
     @Query(() => UsersModel, { nullable: true, name: 'viewer' })
     async getViewer(@Context() context: any) {
         return await this.userService.getViewer(context.req, ['clientApp']);

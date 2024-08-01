@@ -7,8 +7,8 @@
   "license": "UNLICENSED",
   "scripts": {
     "start:dev": "cross-env NODE_ENV=dev nest start --watch",
-    "docker:dev:run":"docker-compose up",
-    "docker:dev:build":"docker-compose build",
+    "docker:dev:run": "docker-compose up",
+    "docker:dev:build": "docker-compose build",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "cross-env NODE_ENV=prod nest start",

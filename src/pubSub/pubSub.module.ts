@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
+import { enums } from 'utils';
+
+import PubSubService from './pubSub.service';
 
 const PUB_SUB = 'PUB_SUB';
 
@@ -13,13 +16,14 @@ const PUB_SUB = 'PUB_SUB';
             useFactory: (configService: ConfigService) =>
                 new RedisPubSub({
                     connection: {
-                        host: configService.get('REDIS_HOST'),
-                        port: configService.get('REDIS_PORT'),
+                        host: configService.get(enums.Env.REDIS_HOST),
+                        port: configService.get(enums.Env.REDIS_PORT),
                     },
                 }),
         },
+        PubSubService,
     ],
-    exports: [PUB_SUB],
+    exports: [PUB_SUB, PubSubService],
 })
 class PubSubModule {}
 

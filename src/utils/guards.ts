@@ -1,10 +1,14 @@
-import { AuthenticationError } from '@nestjs/apollo';
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { AuthGuard } from '@nestjs/passport';
+import { Exceptions } from 'utils';
 
 @Injectable()
 export class AuthLocal extends AuthGuard('local') {
+    constructor() {
+        super();
+    }
+
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const ctx = GqlExecutionContext.create(context);
         const { req } = ctx.getContext();
@@ -15,7 +19,7 @@ export class AuthLocal extends AuthGuard('local') {
         try {
             return (await super.canActivate(context)) as boolean;
         } catch (e) {
-            throw new AuthenticationError('Unauthorized');
+            Exceptions.unauthorized();
         }
     }
 
@@ -45,7 +49,7 @@ export class AuthJwt extends AuthGuard('jwt') {
                 res.clearCookie('accessToken', req.cookies['accessToken']);
             }
 
-            throw new AuthenticationError('Unauthorized');
+            Exceptions.unauthorized();
         }
     }
 
@@ -72,7 +76,7 @@ export class RefreshJwt extends AuthGuard('jwt-refresh') {
         } catch (e) {
             res.clearCookie('accessToken', req.cookies['accessToken']);
             res.clearCookie('refreshToken', req.cookies['refreshToken']);
-            throw new AuthenticationError('Unauthorized');
+            Exceptions.unauthorized();
         }
     }
 

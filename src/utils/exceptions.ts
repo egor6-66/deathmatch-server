@@ -1,10 +1,9 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { AuthenticationError } from '@nestjs/apollo';
 
-export class Validation extends HttpException {
-    message;
-
-    constructor(response) {
-        super(response, HttpStatus.BAD_REQUEST);
-        this.message = response;
+class Exception {
+    unauthorized() {
+        throw new AuthenticationError('Unauthorized');
     }
 }
+
+export default new Exception();

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Request } from 'express';
 import { Repository } from 'typeorm';
 
 import { ClientApp } from '../client-app';
@@ -15,10 +16,6 @@ class UsersService {
         private jwtService: JwtService
     ) {}
 
-    async checkUniqueNickname(nickname: string) {
-        return await this.usersRepo.findOneBy({ nickname });
-    }
-
     async createUser(user: { nickname: string; password: string }) {
         const newUser = await this.usersRepo.create({ ...user, clientApp: new ClientApp() });
         await this.usersRepo.save(newUser);
@@ -30,16 +27,10 @@ class UsersService {
         return await this.usersRepo.findOneBy(data);
     }
 
-    async getViewer(req, relations: ['clientApp' | 'gameServers']) {
+    async getUser(req: Request, relations?: ['clientApp' | 'ownedServers']) {
         const data = await this.jwtService.decode(req.cookies['accessToken']);
 
         return await this.usersRepo.findOne({ where: { id: data.id }, relations: relations });
-    }
-
-    async getId(req) {
-        const data = await this.jwtService.decode(req.cookies['accessToken']);
-
-        return data.id;
     }
 
     async save(user: User) {

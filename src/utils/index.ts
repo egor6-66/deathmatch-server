@@ -1,6 +1,7 @@
-import * as Exceptions from './exceptions';
+import CookieParser from './cookieParser';
+import * as enums from './enums';
+import Exceptions from './exceptions';
 import * as Guards from './guards';
 import * as Interceptors from './interceptors';
-import * as Pipes from './pipes';
 
-export { Exceptions, Guards, Interceptors, Pipes };
+export { CookieParser, enums, Exceptions, Guards, Interceptors };

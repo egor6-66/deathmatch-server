@@ -11,9 +11,11 @@ type ClientApp {
 type GameServer {
   id: Int!
   name: String!
+  password: String
   url: String
   private: Boolean
-  user: User!
+  owner: User!
+  users: User!
 }
 
 type User {
@@ -21,8 +23,10 @@ type User {
   first_name: String
   last_name: String
   nickname: String!
+  isOnline: Boolean!
   clientApp: ClientApp
-  gameServers: GameServer!
+  ownedServers: GameServer!
+  activeServer: GameServer!
 }
 
 type Query {
@@ -39,6 +43,7 @@ type Mutation {
   registration(data: Auth!): Boolean!
   login(data: Auth!): Boolean!
   newServer(data: CreateServer!): GameServer
+  joinServer(id: Int!): Boolean!
 }
 
 input Auth {
@@ -49,4 +54,8 @@ input Auth {
 input CreateServer {
   name: String!
   password: String!
+}
+
+type Subscription {
+  newServer: GameServer!
 }

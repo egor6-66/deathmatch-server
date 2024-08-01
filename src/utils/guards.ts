@@ -35,8 +35,11 @@ export class AuthJwt extends AuthGuard('jwt') {
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const ctx = GqlExecutionContext.create(context);
         const { req, res } = ctx.getContext();
-        const accessToken = req.cookies.accessToken;
-        const refreshToken = req.cookies.refreshToken;
+
+        if (req?.extra?.user) return true;
+
+        const accessToken = req.cookies?.accessToken;
+        const refreshToken = req.cookies?.refreshToken;
 
         if (accessToken) {
             req.headers.authorization = `Bearer ${accessToken}`;
@@ -46,7 +49,7 @@ export class AuthJwt extends AuthGuard('jwt') {
             return (await super.canActivate(context)) as boolean;
         } catch (e) {
             if (!refreshToken) {
-                res.clearCookie('accessToken', req.cookies['accessToken']);
+                res?.clearCookie('accessToken', req?.cookies['accessToken']);
             }
 
             Exceptions.unauthorized();
@@ -65,7 +68,7 @@ export class RefreshJwt extends AuthGuard('jwt-refresh') {
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const ctx = GqlExecutionContext.create(context);
         const { req, res } = ctx.getContext();
-        const refreshToken = req.cookies.refreshToken;
+        const refreshToken = req.cookies.refreshToken || req.extra.user?.refreshToken;
 
         if (refreshToken) {
             req.body.refresh = refreshToken;

@@ -16,6 +16,7 @@ class PubSubService {
         if (cookie) {
             const jwt = new JwtService();
             const accessToken = CookieParser.get(ctx.extra.request.headers.cookie, 'accessToken');
+            const refreshToken = CookieParser.get(ctx.extra.request.headers.cookie, 'refreshToken');
 
             if (!accessToken) {
                 Exceptions.unauthorized();
@@ -23,7 +24,9 @@ class PubSubService {
 
             const userData = jwt.decode(accessToken);
 
-            return await this.usersRepo.findOneBy(userData.id);
+            const user = await this.usersRepo.findOneBy({ id: userData.id });
+
+            return { ...user, accessToken, refreshToken };
         }
     }
 

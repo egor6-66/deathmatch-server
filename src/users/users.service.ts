@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Request } from 'express';
-import { Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 
 import { ClientApp } from '../client-app';
 
@@ -27,10 +27,10 @@ class UsersService {
         return await this.usersRepo.findOneBy(data);
     }
 
-    async getUser(req: Request, relations?: ['clientApp' | 'ownedServers']) {
+    async getUser(req: Request, findOptions?: FindOneOptions<User>) {
         const data = await this.jwtService.decode(req.cookies['accessToken']);
 
-        return await this.usersRepo.findOne({ where: { id: data.id }, relations: relations });
+        return await this.usersRepo.findOne({ ...findOptions, where: { ...findOptions?.where, id: data.id } });
     }
 
     async save(user: User) {

@@ -14,23 +14,25 @@ type GameServer {
   password: String
   url: String
   private: Boolean
+  usersCount: Float
   owner: User!
   users: User!
 }
 
 type User {
-  id: Int!
+  id: Int
   first_name: String
   last_name: String
-  nickname: String!
-  isOnline: Boolean!
+  nickname: String
+  password: String
+  isOnline: Boolean
   clientApp: ClientApp
   ownedServers: GameServer!
   activeServer: GameServer!
 }
 
 type Query {
-  servers: [GameServer!]
+  viewerServers: [GameServer!]
   allServers: [GameServer!]
   server(id: Int!): GameServer
   viewer: User

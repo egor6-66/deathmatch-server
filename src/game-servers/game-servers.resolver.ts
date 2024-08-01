@@ -1,13 +1,15 @@
-import { ClassSerializerInterceptor, Inject, UseInterceptors } from '@nestjs/common';
+import { Inject, UseGuards } from '@nestjs/common';
 import { Args, Context, Int, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
+import { Guards } from '@utils';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 
 import { PUB_SUB } from '../pubSub/pubSub.module';
 
 import GameServer from './game-servers.model';
 import GameServersService from './game-servers.service';
-import { enums, reqDto } from './utils';
+import { Enums, Inputs } from './utils';
 
+@UseGuards(Guards.AuthJwt)
 @Resolver()
 class GameServersResolver {
     constructor(
@@ -15,29 +17,24 @@ class GameServersResolver {
         @Inject(PUB_SUB) private readonly pubSub: RedisPubSub
     ) {}
 
-    @Mutation(() => GameServer, { nullable: true, name: 'newServer' })
-    async createServer(@Args('data') data: reqDto.CreateServer, @Context() context: any) {
+    @Mutation(() => GameServer, { nullable: true, name: Enums.EVENTS.newServer })
+    async createServer(@Args('data') data: Inputs.CreateServer, @Context() context: any) {
         const newServer = await this.gameServersService.createServer(data, context.req);
-        await this.pubSub.publish(enums.SUB_EVENTS.newServer, { newServer });
+        await this.pubSub.publish(Enums.EVENTS.newServer, { newServer });
 
         return newServer;
     }
 
-    // @UseInterceptors(ClassSerializerInterceptor)
     @Subscription(() => GameServer, {
         filter: (payload, variables, context) => {
-            // console.log('payload', payload);
-            // console.log('variables', variables);
-            console.log(context.req.extra);
-
-            return true;
+            return context?.req.extra?.user.id !== payload.newServer.owner.id;
         },
     })
     newServer() {
-        return this.pubSub.asyncIterator(enums.SUB_EVENTS.newServer, { da: 'dw' });
+        return this.pubSub.asyncIterator(Enums.EVENTS.newServer);
     }
 
-    @Query(() => [GameServer], { nullable: true, name: 'servers' })
+    @Query(() => [GameServer], { nullable: true, name: 'viewerServers' })
     async getViewerServers(@Context() context: any) {
         return await this.gameServersService.getViewerServers(context.req);
     }

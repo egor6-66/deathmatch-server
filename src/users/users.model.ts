@@ -1,4 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Exclude } from 'class-transformer';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 import ClientApp from '../client-app/client-app.model';
@@ -8,7 +9,7 @@ import GameServer from '../game-servers/game-servers.model';
 @ObjectType()
 class User {
     @PrimaryGeneratedColumn()
-    @Field(() => Int)
+    @Field(() => Int, { nullable: true })
     id: number;
 
     @Column({ nullable: true })
@@ -20,14 +21,16 @@ class User {
     last_name: string;
 
     @Column({ unique: true })
-    @Field()
+    @Field({ nullable: true })
     nickname: string;
 
     @Column()
+    @Field({ nullable: true })
+    @Exclude()
     password: string;
 
     @Column({ default: false })
-    @Field()
+    @Field({ nullable: true })
     isOnline: boolean;
 
     @OneToOne(() => ClientApp, (ClientApp) => ClientApp, { cascade: true })

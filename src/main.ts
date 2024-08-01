@@ -1,6 +1,5 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { Interceptors } from '@utils';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import process from 'process';
@@ -21,7 +20,7 @@ async function bootstrap() {
     });
 
     app.use(cors(options));
-    app.useGlobalInterceptors(new Interceptors.TransformResponse());
+    // app.useGlobalInterceptors(new Interceptors.TransformResponse());
     app.use(cookieParser());
 
     app.useGlobalPipes(

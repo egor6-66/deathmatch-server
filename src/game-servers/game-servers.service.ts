@@ -4,12 +4,15 @@ import * as bcrypt from 'bcrypt';
 import { Request } from 'express';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { Not, Repository } from 'typeorm';
+import { Exceptions } from 'utils';
+import { v4 as uuidv4 } from 'uuid';
 
 import { PUB_SUB } from '../pubSub/pubSub.module';
+import User from '../users/users.model';
 import UsersService from '../users/users.service';
 
 import GameServer from './game-servers.model';
-import { generateServerUrl, reqDto, resDto } from './utils';
+import { Inputs, QueryBuilders } from './utils';
 
 @Injectable()
 class GameServersService {
@@ -19,52 +22,40 @@ class GameServersService {
         private readonly userService: UsersService
     ) {}
 
-    async createServer(data: reqDto.CreateServer, req: Request) {
-        const user = await this.userService.getUser(req, ['ownedServers']);
+    async createServer(data: Inputs.CreateServer, req: Request) {
+        const user = await this.userService.getUser(req, { relations: { ownedServers: true } });
 
         if (user.ownedServers.find((i) => i.name === data.name)) {
-            throw Error('Not unique');
+            Exceptions.notUnique();
         }
 
         const hashPass = data.password ? await bcrypt.hash(data.password, 5) : '';
-        const newServer = await this.gameServersRepo.create({ ...data, password: hashPass, private: !!data.password });
+        const url = uuidv4();
+        const newServer = await this.gameServersRepo.create({ ...data, password: hashPass, private: !!data.password, url });
         user.ownedServers.push(newServer);
         await this.userService.save(user);
 
-        return new resDto.GameServerDTO(newServer, user);
+        return { ...newServer, owner: user };
     }
 
     async getViewerServers(req) {
-        const user = await this.userService.getUser(req, ['ownedServers']);
-        console.log(user);
+        const user = await this.userService.getUser(req, { relations: { ownedServers: { users: true } } } as any);
 
         return user.ownedServers;
     }
 
     async getAllServers(req) {
-        // const viewerId = await this.userService.getId(req);
-        // console.log(viewerId);
+        const user = await this.userService.getUser(req);
 
-        //
-        // console.log(a);
-        //
-        const a = await this.gameServersRepo.find({ relations: ['users'] });
-        a.forEach((i) => {
-            // console.log(i.name, i.users);
-        });
-
-        return a;
+        return await QueryBuilders.getAllServers(this.gameServersRepo, user);
     }
 
     async getServer(id: number) {
-        const server = await this.gameServersRepo.findOne({ where: { id }, relations: ['owner'] });
-        // console.log(server);
-
-        return { ...server, url: generateServerUrl(server.owner.nickname, server.name) };
+        return await this.gameServersRepo.findOne({ where: { id }, relations: ['owner'] });
     }
 
     async joinServer(id: number, req: Request) {
-        const user = await this.userService.getUser(req, ['ownedServers']);
+        const user = await this.userService.getUser(req);
 
         // if(user.gameServers.find(i => i.id === id)){
         //

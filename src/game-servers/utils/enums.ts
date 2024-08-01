@@ -1,3 +1,3 @@
-export enum SUB_EVENTS {
+export enum EVENTS {
     newServer = 'newServer',
 }

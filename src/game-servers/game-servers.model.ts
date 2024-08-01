@@ -15,7 +15,7 @@ class GameServer {
     @Field()
     name: string;
 
-    @Column()
+    @Column({ select: false })
     @Field({ nullable: true })
     @Exclude()
     password: string;
@@ -28,12 +28,16 @@ class GameServer {
     @Field({ nullable: true })
     private: boolean;
 
+    @Column({ nullable: true })
+    @Field({ nullable: true })
+    usersCount: number;
+
     @ManyToOne(() => User, (user) => user.ownedServers)
-    @JoinColumn({ name: 'ownerId' })
+    @JoinColumn({ name: 'owner' })
     @Field(() => User)
     owner: User;
 
-    @OneToMany(() => User, (user) => user.activeServer, { cascade: true })
+    @OneToMany(() => User, (user) => user.activeServer, { cascade: true, nullable: true })
     @Field(() => User)
     users: User[];
 }

@@ -12,7 +12,7 @@ class UsersResolver {
     @UseGuards(Guards.AuthJwt)
     @Query(() => UsersModel, { nullable: true, name: 'viewer' })
     async getViewer(@Context() ctx: any) {
-        return await this.userService.getUser(ctx.req, ['clientApp']);
+        return await this.userService.getUser(ctx.req, { relations: { clientApp: true } });
     }
 
     @Query(() => Boolean, { nullable: true, name: 'uniqueNickname' })

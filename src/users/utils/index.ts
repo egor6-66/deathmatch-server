@@ -1,3 +1,3 @@
-import * as Inputs from './inputs';
+import * as UserDto from './dto';
 
-export { Inputs };
+export { UserDto };

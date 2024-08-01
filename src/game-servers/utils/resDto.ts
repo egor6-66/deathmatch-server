@@ -1,3 +1,4 @@
+import { OmitType } from '@nestjs/graphql';
 import { Exclude } from 'class-transformer';
 
 import User from '../../users/users.model';
@@ -5,9 +6,11 @@ import GameServer from '../game-servers.model';
 
 import generateServerUrl from './generateServerUrl';
 
-class BaseGameServer extends GameServer {
+class BaseGameServer extends OmitType(GameServer, ['owner'] as const) {
+    owner: Partial<User>;
+
     constructor(server: GameServer, user: User) {
-        super();
+        super(null, null);
         Object.entries(server).forEach(([key, val]) => {
             if (key === 'url') {
                 return (this[key] = generateServerUrl(user.nickname, server.name));

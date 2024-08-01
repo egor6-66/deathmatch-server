@@ -30,29 +30,29 @@ type User {
 }
 
 type Query {
+  servers: [GameServer!]
+  allServers: [GameServer!]
+  server(id: Int!): GameServer
   viewer: User
   uniqueNickname(nickname: String!): Boolean
   logout: Boolean!
   refreshToken: Boolean!
-  servers: [GameServer!]
-  allServers: [GameServer!]
-  server(id: Int!): GameServer
 }
 
 type Mutation {
-  registration(data: Auth!): Boolean!
-  login(data: Auth!): Boolean!
   newServer(data: CreateServer!): GameServer
   joinServer(id: Int!): Boolean!
-}
-
-input Auth {
-  nickname: String!
-  password: String!
+  registration(data: Auth!): Boolean!
+  login(data: Auth!): Boolean!
 }
 
 input CreateServer {
   name: String!
+  password: String!
+}
+
+input Auth {
+  nickname: String!
   password: String!
 }
 

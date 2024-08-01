@@ -35,7 +35,7 @@ class GameServer {
 
     @OneToMany(() => User, (user) => user.activeServer, { cascade: true })
     @Field(() => User)
-    users?: User[];
+    users: User[];
 }
 
 export default GameServer;

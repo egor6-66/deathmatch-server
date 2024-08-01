@@ -16,13 +16,13 @@ import UsersModule from './users/users.module';
 @Module({
     imports: [
         ConfigModule.forRoot(configs.base()),
-        GraphQLModule.forRootAsync(configs.graphQl()),
         TypeOrmModule.forRootAsync(configs.typeorm([User, ClientApp, GameServer])),
+        GraphQLModule.forRootAsync(configs.graphQl()),
+        GameServersModule,
+        ClientAppModule,
+        PubSubModule,
         UsersModule,
         AuthModule,
-        ClientAppModule,
-        GameServersModule,
-        PubSubModule,
     ],
 })
 class AppModule {}

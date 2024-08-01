@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository, TypeOrmModule } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CookieParser, Exceptions } from 'utils';
 
 import User from '../users/users.model';
 
 @Injectable()
 class PubSubService {
-    onConnect(ctx: any) {
+    constructor(@InjectRepository(User) private usersRepo: Repository<User>) {}
+
+    private async getUser(ctx) {
         const cookie = ctx.extra.request.headers.cookie;
-        console.log('connect');
 
         if (cookie) {
             const jwt = new JwtService();
@@ -20,15 +21,24 @@ class PubSubService {
                 Exceptions.unauthorized();
             }
 
-            // await this.usersRepo.save({ isOnline: true });
-            ctx.extra.user = jwt.decode(accessToken);
-        }
+            const userData = jwt.decode(accessToken);
 
-        return null;
+            return await this.usersRepo.findOneBy(userData.id);
+        }
     }
 
-    onDisconnect(ctx: any) {
-        console.log('disconnect');
+    async onConnect(ctx: any) {
+        const user = await this.getUser(ctx);
+        user.isOnline = true;
+        await this.usersRepo.save(user);
+        ctx.extra.user = user;
+    }
+
+    async onDisconnect(ctx: any) {
+        const user = await this.getUser(ctx);
+        user.isOnline = false;
+        await this.usersRepo.save(user);
+        ctx.extra.user = null;
     }
 }
 

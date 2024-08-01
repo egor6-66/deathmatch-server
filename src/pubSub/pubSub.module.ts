@@ -1,14 +1,17 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { enums } from 'utils';
+
+import User from '../users/users.model';
 
 import PubSubService from './pubSub.service';
 
 const PUB_SUB = 'PUB_SUB';
 
 @Module({
-    imports: [ConfigModule],
+    imports: [ConfigModule, TypeOrmModule.forFeature([User])],
     providers: [
         {
             provide: PUB_SUB,

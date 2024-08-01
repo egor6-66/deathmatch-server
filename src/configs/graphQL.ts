@@ -16,8 +16,8 @@ const graphQl = (): GqlModuleAsyncOptions<GqlModuleOptions, GqlOptionsFactory<Gq
             autoSchemaFile: './schema.gql',
             subscriptions: {
                 'graphql-ws': {
-                    onConnect: pubSubService.onConnect,
-                    onDisconnect: pubSubService.onDisconnect,
+                    onConnect: pubSubService.onConnect.bind(pubSubService),
+                    onDisconnect: pubSubService.onDisconnect.bind(pubSubService),
                 },
             },
             playground: configService.get(enums.Env.NODE_ENV) === 'dev' ? { settings: { 'request.credentials': 'include' } } : false,

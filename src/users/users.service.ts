@@ -7,7 +7,7 @@ import { Repository } from 'typeorm';
 import { ClientApp } from '../client-app';
 
 import User from './users.model';
-import { Inputs } from './utils';
+import { UserDto } from './utils';
 
 @Injectable()
 class UsersService {
@@ -23,7 +23,7 @@ class UsersService {
         return newUser;
     }
 
-    async getUserBy(data: Inputs.GetUser) {
+    async getUserBy(data: UserDto.GetUser) {
         return await this.usersRepo.findOneBy(data);
     }
 

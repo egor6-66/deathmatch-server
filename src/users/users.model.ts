@@ -13,35 +13,35 @@ class User {
 
     @Column({ nullable: true })
     @Field({ nullable: true })
-    first_name?: string;
+    first_name: string;
 
     @Column({ nullable: true })
     @Field({ nullable: true })
-    last_name?: string;
+    last_name: string;
 
     @Column({ unique: true })
     @Field()
     nickname: string;
 
     @Column()
-    password?: string;
+    password: string;
 
     @Column({ default: false })
     @Field()
-    isOnline?: boolean;
+    isOnline: boolean;
 
     @OneToOne(() => ClientApp, (ClientApp) => ClientApp, { cascade: true })
     @JoinColumn()
     @Field({ nullable: true })
-    clientApp?: ClientApp;
+    clientApp: ClientApp;
 
     @OneToMany(() => GameServer, (gameServer) => gameServer.owner, { cascade: true })
     @Field(() => GameServer)
-    ownedServers?: GameServer[];
+    ownedServers: GameServer[];
 
     @ManyToOne(() => GameServer, (gameServer) => gameServer.users)
     @Field(() => GameServer)
-    activeServer?: GameServer;
+    activeServer: GameServer;
 }
 
 export default User;

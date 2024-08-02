@@ -8,6 +8,14 @@ class Exception {
     notUnique() {
         throw new ValidationError('Not unique');
     }
+
+    maxCount() {
+        throw new ValidationError('Max count');
+    }
+
+    serverError() {
+        throw new ValidationError('Server error');
+    }
 }
 
 export default new Exception();

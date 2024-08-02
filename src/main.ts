@@ -20,7 +20,6 @@ async function bootstrap() {
     });
 
     app.use(cors(options));
-    // app.useGlobalInterceptors(new Interceptors.TransformResponse());
     app.use(cookieParser());
 
     app.useGlobalPipes(

@@ -17,10 +17,10 @@ class GameServersResolver {
         @Inject(PUB_SUB) private readonly pubSub: RedisPubSub
     ) {}
 
-    @Mutation(() => GameServer, { nullable: true, name: Enums.EVENTS.newServer })
+    @Mutation(() => GameServer, { nullable: true, name: Enums.EVENTS.NEW_SERVER })
     async createServer(@Args('data') data: Inputs.CreateServer, @Context() context: any) {
         const newServer = await this.gameServersService.createServer(data, context.req);
-        await this.pubSub.publish(Enums.EVENTS.newServer, { newServer });
+        await this.pubSub.publish(Enums.EVENTS.NEW_SERVER, { newServer });
 
         return newServer;
     }
@@ -31,25 +31,25 @@ class GameServersResolver {
         },
     })
     newServer() {
-        return this.pubSub.asyncIterator(Enums.EVENTS.newServer);
+        return this.pubSub.asyncIterator(Enums.EVENTS.NEW_SERVER);
     }
 
-    @Query(() => [GameServer], { nullable: true, name: 'viewerServers' })
+    @Query(() => [GameServer], { nullable: true, name: Enums.EVENTS.VIEWER_SERVERS })
     async getViewerServers(@Context() context: any) {
         return await this.gameServersService.getViewerServers(context.req);
     }
 
-    @Query(() => [GameServer], { nullable: true, name: 'allServers' })
+    @Query(() => [GameServer], { nullable: true, name: Enums.EVENTS.ALL_SERVERS })
     async getAllServers(@Context() context: any) {
         return await this.gameServersService.getAllServers(context.req);
     }
 
-    @Query(() => GameServer, { nullable: true, name: 'server' })
+    @Query(() => GameServer, { nullable: true, name: Enums.EVENTS.SERVER })
     async getServer(@Args('id', { type: () => Int }) id: number) {
         return await this.gameServersService.getServer(id);
     }
 
-    @Mutation(() => Boolean)
+    @Mutation(() => Boolean, { name: Enums.EVENTS.JOIN_SERVER })
     async joinServer(@Args('id', { type: () => Int }) id: number, @Context() context: any) {
         return await this.gameServersService.joinServer(id, context.req);
     }

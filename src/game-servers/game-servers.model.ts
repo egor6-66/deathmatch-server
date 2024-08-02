@@ -1,5 +1,4 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { Exclude } from 'class-transformer';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import User from '../users/users.model';
@@ -16,8 +15,6 @@ class GameServer {
     name: string;
 
     @Column({ select: false })
-    @Field({ nullable: true })
-    @Exclude()
     password: string;
 
     @Column({ nullable: true })

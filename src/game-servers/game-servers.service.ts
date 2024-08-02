@@ -8,11 +8,10 @@ import { Exceptions } from 'utils';
 import { v4 as uuidv4 } from 'uuid';
 
 import { PUB_SUB } from '../pubSub/pubSub.module';
-import User from '../users/users.model';
 import UsersService from '../users/users.service';
 
 import GameServer from './game-servers.model';
-import { Inputs, QueryBuilders } from './utils';
+import { Inputs } from './utils';
 
 @Injectable()
 class GameServersService {
@@ -25,13 +24,16 @@ class GameServersService {
     async createServer(data: Inputs.CreateServer, req: Request) {
         const user = await this.userService.getUser(req, { relations: { ownedServers: true } });
 
+        if (user.ownedServers.length > 30) {
+            Exceptions.maxCount();
+        }
+
         if (user.ownedServers.find((i) => i.name === data.name)) {
             Exceptions.notUnique();
         }
 
         const hashPass = data.password ? await bcrypt.hash(data.password, 5) : '';
-        const url = uuidv4();
-        const newServer = await this.gameServersRepo.create({ ...data, password: hashPass, private: !!data.password, url });
+        const newServer = await this.gameServersRepo.create({ ...data, password: hashPass, private: !!data.password, url: uuidv4() });
         user.ownedServers.push(newServer);
         await this.userService.save(user);
 
@@ -39,34 +41,40 @@ class GameServersService {
     }
 
     async getViewerServers(req) {
-        const user = await this.userService.getUser(req, { relations: { ownedServers: { users: true } } } as any);
+        const id = await this.userService.getId(req);
 
-        return user.ownedServers;
+        return await this.gameServersRepo
+            .createQueryBuilder()
+            .loadRelationCountAndMap('GameServer.usersCount', 'GameServer.users')
+            .where({ owner: { id } })
+            .getMany();
     }
 
     async getAllServers(req) {
         const user = await this.userService.getUser(req);
 
-        return await QueryBuilders.getAllServers(this.gameServersRepo, user);
+        return await this.gameServersRepo
+            .createQueryBuilder()
+            .loadRelationCountAndMap('GameServer.usersCount', 'GameServer.users')
+            .leftJoinAndSelect('GameServer.owner', 'User')
+            .where({ owner: Not(user.id) })
+            .getMany();
     }
 
     async getServer(id: number) {
-        return await this.gameServersRepo.findOne({ where: { id }, relations: ['owner'] });
+        return await this.gameServersRepo.findOne({ where: { id }, relations: ['owner', 'users'] });
     }
 
     async joinServer(id: number, req: Request) {
         const user = await this.userService.getUser(req);
 
-        // if(user.gameServers.find(i => i.id === id)){
-        //
-        // }
+        try {
+            await this.gameServersRepo.createQueryBuilder().relation(GameServer, 'users').of(id).add(user);
 
-        const server = await this.gameServersRepo.findOne({ where: { id }, relations: ['users'] });
-        server.users.push(user);
-        // console.log(server);
-        await this.gameServersRepo.save(server);
-
-        return true;
+            return true;
+        } catch (e) {
+            Exceptions.serverError();
+        }
     }
 }
 

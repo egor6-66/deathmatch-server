@@ -1,5 +1,4 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { Exclude } from 'class-transformer';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 import ClientApp from '../client-app/client-app.model';
@@ -25,8 +24,6 @@ class User {
     nickname: string;
 
     @Column()
-    @Field({ nullable: true })
-    @Exclude()
     password: string;
 
     @Column({ default: false })

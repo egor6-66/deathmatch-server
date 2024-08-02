@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { CookieParser, Exceptions } from 'utils';
 
-import User from '../users/users.model';
+import UsersService from '../users/users.service';
 
 @Injectable()
 class PubSubService {
-    constructor(@InjectRepository(User) private usersRepo: Repository<User>) {}
+    constructor(private readonly userService: UsersService) {}
 
     private async getUser(ctx) {
         const cookie = ctx.extra.request.headers.cookie;
@@ -24,24 +22,20 @@ class PubSubService {
 
             const userData = jwt.decode(accessToken);
 
-            const user = await this.usersRepo.findOneBy({ id: userData.id });
-
-            return { ...user, accessToken, refreshToken };
+            return { ...userData, accessToken, refreshToken };
         }
     }
 
     async onConnect(ctx: any) {
         const user = await this.getUser(ctx);
-        user.isOnline = true;
-        await this.usersRepo.save(user);
         ctx.extra.user = user;
+        await this.userService.onConnect(user);
     }
 
     async onDisconnect(ctx: any) {
         const user = await this.getUser(ctx);
-        user.isOnline = false;
-        await this.usersRepo.save(user);
         ctx.extra.user = null;
+        await this.userService.onDisconnect(user);
     }
 }
 

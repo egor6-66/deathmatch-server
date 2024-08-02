@@ -28,13 +28,30 @@ class UsersService {
     }
 
     async getUser(req: Request, findOptions?: FindOneOptions<User>) {
+        const id = await this.getId(req);
+
+        return await this.usersRepo.findOne({ ...findOptions, where: { ...findOptions?.where, id } });
+    }
+
+    async getId(req: Request) {
         const data = await this.jwtService.decode(req.cookies['accessToken']);
 
-        return await this.usersRepo.findOne({ ...findOptions, where: { ...findOptions?.where, id: data.id } });
+        return data.id;
+    }
+
+    async onConnect(user: User) {
+        user.isOnline = true;
+        await this.usersRepo.save(user);
+    }
+
+    async onDisconnect(user: User) {
+        user.activeServer = null;
+        user.isOnline = false;
+        await this.usersRepo.save(user);
     }
 
     async save(user: User) {
-        await this.usersRepo.save(user);
+        return await this.usersRepo.save(user);
     }
 }
 

@@ -11,7 +11,6 @@ type ClientApp {
 type GameServer {
   id: Int!
   name: String!
-  password: String
   url: String
   private: Boolean
   usersCount: Float
@@ -24,7 +23,6 @@ type User {
   first_name: String
   last_name: String
   nickname: String
-  password: String
   isOnline: Boolean
   clientApp: ClientApp
   ownedServers: GameServer!
@@ -32,11 +30,11 @@ type User {
 }
 
 type Query {
+  viewer: User
+  uniqueNickname(nickname: String!): Boolean
   viewerServers: [GameServer!]
   allServers: [GameServer!]
   server(id: Int!): GameServer
-  viewer: User
-  uniqueNickname(nickname: String!): Boolean
   logout: Boolean!
   refreshToken: Boolean!
 }
